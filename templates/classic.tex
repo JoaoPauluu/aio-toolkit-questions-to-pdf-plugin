@@ -1,0 +1,45 @@
+% engine: pdflatex
+% Classic template: one column, numbered questions, header with student name.
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,graphicx,enumitem,fancyhdr,array}
+
+\pagestyle{fancy}\fancyhf{}
+\lhead{<<title>>}\rhead{<<student_name>>}\cfoot{\thepage}
+\setlength{\parindent}{0pt}
+
+% ---- STANDARD CONTRACT (see docs/TEMPLATES.md) -------------------------
+\newcounter{examq}
+\newenvironment{examquestion}
+  {\par\bigskip\refstepcounter{examq}\textbf{Question \theexamq.}\ }{\par}
+
+\newlist{examalternatives}{enumerate}{2}
+\setlist[examalternatives]{label=\Alph*),leftmargin=2em,itemsep=2pt}
+
+\newlist{examparts}{enumerate}{3}
+\setlist[examparts,1]{label=\alph*),leftmargin=2em,itemsep=4pt}
+\setlist[examparts,2]{label=\roman*.,leftmargin=2em}
+\setlist[examparts,3]{label=\arabic*.,leftmargin=2em}
+
+\newcommand{\examimage}[3]{%
+  \begin{center}\includegraphics[width=#2\linewidth]{#1}%
+  \if\relax\detokenize{#3}\relax\else\par\small #3\fi\end{center}}
+\newcommand{\exampoints}[1]{\hfill\textit{(#1 pts)}}
+
+\newcommand{\examhline}{\hline}          % rule drawn around every table row (use \relax for none)
+\newcommand{\examth}[1]{\textbf{#1}}     % header cell
+\newenvironment{examtable}[2]            % #1 = number of columns, #2 = caption (may be empty)
+  {\def\examtablecaption{#2}\par\medskip%
+   \begin{center}\renewcommand{\arraystretch}{1.25}\begin{tabular}{|*{#1}{>{\centering\arraybackslash}p{\dimexpr(\linewidth-\arrayrulewidth)/#1-2\tabcolsep-\arrayrulewidth\relax}|}}\examhline}
+  {\end{tabular}\ifx\examtablecaption\empty\else\par \small\examtablecaption\fi\end{center}\par\medskip}
+% ------------------------------------------------------------------------
+
+\begin{document}
+\begin{center}{\Large\bfseries <<title>>}\end{center}
+\noindent\textbf{Student:} <<student_name>>\hfill\textbf{Date:} <<date>>
+\hrule\medskip
+
+<<body>>
+\end{document}

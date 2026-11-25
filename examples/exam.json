@@ -1,0 +1,46 @@
+{
+  "student_name": "Ana Souza",
+  "title": "Algebra - Midterm",
+  "questions": [
+    {
+      "statement_tex": "Explique, com suas palavras, o que é uma função.",
+      "points": 1
+    },
+    {
+      "statement_tex": "Qual é a derivada de \\(f(x)=x^2\\)?",
+      "points": 1,
+      "alternatives": [
+        {
+          "content_tex": "\\(x\\)"
+        },
+        {
+          "content_tex": "\\(2x\\)",
+          "is_correct": true
+        },
+        {
+          "content_tex": "\\(x^2\\)"
+        },
+        {
+          "content_tex": "\\(2\\)"
+        }
+      ]
+    },
+    {
+      "statement_tex": "Resolva as equações:",
+      "points": 4,
+      "items": [
+        {
+          "statement_tex": "\\(2x + 3 = 11\\)",
+          "points": 2
+        },
+        {
+          "statement_tex": "\\(x^2 - 5x + 6 = 0\\)",
+          "points": 2
+        }
+      ]
+    },
+    {
+      "statement_tex": "A tabela mostra o consumo em dois dias:\n\n\\begin{examtable}{3}{Tabela 1}\n\\examth{Dia} & \\examth{Horas} & \\examth{Consumo} \\\\ \\examhline\nDia 1 & 10 h & 14 kWh \\\\ \\examhline\nDia 2 & 20 h & 18 kWh \\\\ \\examhline\n\\end{examtable}\n\nQual o consumo médio por hora? Cada kWh custa R\\$ 0,50 (desconto de 5\\%)."
+    }
+  ]
+}

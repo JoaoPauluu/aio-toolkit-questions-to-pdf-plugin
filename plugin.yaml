@@ -1,0 +1,48 @@
+id: assignment-pdf
+name: Assignment PDF Maker
+category: Documents
+icon: "📝"
+description: Turn exam/assignment JSON (+ images) into a PDF through LaTeX templates.
+version: 1.0.0
+author: JoaoPauluu
+homepage: https://github.com/JoaoPauluu/aio-toolkit-questions-to-pdf-plugin
+license: MIT
+aio_api: 1
+provides: [assignment.pdf]
+setup: [python3, setup.py]      # downloads Tectonic + pydantic and warms the TeX package cache
+run: [python3, run.py]
+timeout: 15m
+submit_label: Build PDF
+inputs:
+  - name: files
+    type: file
+    label: Exam JSON file(s) and images
+    accept: .json,.png,.jpg,.jpeg,.pdf,application/json,image/png,image/jpeg,application/pdf
+    multiple: true
+    help: Each .json file becomes one PDF. Images are matched by file name to the "file" fields in the JSON.
+  - name: exam
+    type: json
+    label: Exam JSON
+    help: 'One exam object, or a list of them (API callers). Same format as the .json files: {"student_name", "title", "date", "questions": [...]}.'
+  - name: images
+    type: json
+    label: Images
+    help: 'Images for JSON-only requests: {"graph.png": "<base64 or data: URL>"}.'
+  - name: template
+    type: select
+    label: Template
+    default: classic
+    options:
+      - {value: classic, label: Classic}
+      - {value: compact, label: Compact (two columns)}
+      - {value: blue_continuous, label: Blue}
+      - {value: blue_page_break, label: Blue, one question per page}
+  - name: output_name
+    type: text
+    label: Output name
+    default: exam
+    help: With several exams, each PDF is named <output>_<student>.pdf.
+  - name: keep_tex
+    type: checkbox
+    label: Also return the generated .tex
+    default: false

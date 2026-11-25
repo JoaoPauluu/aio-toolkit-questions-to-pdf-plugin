@@ -1,0 +1,42 @@
+{
+  "student_name": "Bruno Lima",
+  "title": "Funções - Lista 2",
+  "date": "25/11/2026",
+  "questions": [
+    {
+      "statement_tex": "Observe o gráfico de \\(f\\) abaixo.\n\n{{image:graph}}\n\nQuantas raízes reais \\(f\\) possui?",
+      "points": 2,
+      "alternatives": [
+        "Nenhuma",
+        "Uma",
+        {
+          "content_tex": "Duas",
+          "is_correct": true
+        },
+        "Três"
+      ],
+      "images": [
+        {
+          "key": "graph",
+          "file": "graph.png",
+          "width": 0.45,
+          "caption": "Gráfico de \\(f(x)=x^2-1\\)"
+        }
+      ]
+    },
+    {
+      "statement_tex": "Ainda sobre \\(f(x)=x^2-1\\):",
+      "points": 3,
+      "items": [
+        {
+          "statement_tex": "Calcule \\(f(3)\\).",
+          "points": 1
+        },
+        {
+          "statement_tex": "Para quais valores de \\(x\\) temos \\(f(x) < 0\\)?",
+          "points": 2
+        }
+      ]
+    }
+  ]
+}
