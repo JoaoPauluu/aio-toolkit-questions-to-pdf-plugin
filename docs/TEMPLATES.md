@@ -93,6 +93,59 @@ Everything visual is yours. Examples:
 \newcommand{\exampoints}[1]{\hfill\fbox{#1}}             % boxed points
 ```
 
+### Sections and answer key (optional macros)
+
+These are **optional**: the generated body starts with `\providecommand` defaults, so a template only defines
+the ones it wants to restyle or translate, with `\newcommand` in the preamble. All four shipped templates style
+them.
+
+| Command | Used for | Default output |
+|---|---|---|
+| `\examsection{title}{intro}` | before the first question of each section | bold title; `intro` (a fragment, may be empty) below |
+| `\examkeytitle{title}` | once, at the start of the answer key | centered large title |
+| `\examcorrect{B}` | correct alternative(s), e.g. `B` or `A, C` | **Correct alternative:** B |
+| `\examanswer{tex}` | `answer_tex` | **Answer:** tex |
+| `\examexplanation{tex}` | `explanation_tex` (only with `answer_key: full`) | **Solution:** tex |
+| `\examnoanswer` | question/item with nothing to show | *(no answer given)* |
+| `\examkeysetup` | runs once, right after `\examkeytitle` | nothing |
+
+The answer key reuses `examquestion` and `examparts`, so it has the same numbering and look as the exam. When it
+is appended to the exam it starts on a new page and the `examq` counter is reset. `\examkeysetup` is for layout
+that only makes sense in the key; `blue_page_break.tex` uses it to stop breaking the page after every question:
+
+```latex
+\newcommand{\examquestionend}{\clearpage}
+\newenvironment{examquestion}{...}{\par\examquestionend}
+\newcommand{\examkeysetup}{\renewcommand{\examquestionend}{\vspace{0.6em}}}
+```
+
+A sectioned exam and its key look like this:
+
+```latex
+%%SECTION
+\examsection{Parte A - Frações}{Simplifique as respostas.}
+
+%%QUESTION 1
+\begin{examquestion}
+...
+\end{examquestion}
+
+% ... answer key:
+\examkeytitle{Gabarito}
+\examkeysetup
+%%SECTION
+\examsection{Parte A - Frações}{}
+
+%%QUESTION 1
+\begin{examquestion}
+\examcorrect{B}
+\examexplanation{Com denominador comum 6 ...}
+\end{examquestion}
+```
+
+Tip: put `\needspace{9\baselineskip}` (package `needspace`) at the start of `\examsection` so a heading never
+ends up alone at the bottom of a page.
+
 ## 5. Engine, safety and compilation
 
 - **Engine:** templates are compiled with [Tectonic](https://tectonic-typesetting.github.io/) (XeTeX). A

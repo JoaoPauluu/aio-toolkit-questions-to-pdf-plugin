@@ -66,3 +66,13 @@ def test_errors_are_reported(tmp_path):
 def test_no_exam(tmp_path):
     proc, _ = run(tmp_path, {})
     assert proc.returncode == 1 and "::error Add at least one .json" in proc.stdout
+
+
+def test_sections_with_separate_answer_key(tmp_path):
+    exam = json.loads((EXAMPLES / "exam_sections.json").read_text())
+    b64 = base64.b64encode((EXAMPLES / "graph.png").read_bytes()).decode()
+    proc, outs = run(tmp_path, {"exam": exam, "images": {"graph.png": b64}, "template": "blue_continuous",
+                                "output_name": "exam", "answer_key": "full", "key_output": "separate",
+                                "key_title": "Gabarito"})
+    assert proc.returncode == 0, proc.stdout
+    assert outs == ["exam.pdf", "exam_answer_key.pdf"]

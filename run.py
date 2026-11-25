@@ -7,6 +7,9 @@ params:
   template:    template name (templates/<name>.tex)
   output_name: base name of the PDF(s)
   keep_tex:    also write the generated .tex
+  answer_key:  none | answers | full (answers + explanations)
+  key_output:  append (after the exam, same PDF) | separate (<name>_answer_key.pdf)
+  key_title:   heading of the answer key
 """
 import base64
 import binascii
@@ -28,6 +31,9 @@ p = aio.params()
 template = p.get("template") or "classic"
 output_name = (p.get("output_name") or "exam").strip() or "exam"
 keep_tex = bool(p.get("keep_tex"))
+answer_key = p.get("answer_key") or "none"
+key_output = p.get("key_output") or "append"
+key_title = p.get("key_title") or "Gabarito"
 
 # ---- collect exams and images ----
 sources: list[tuple[str, object]] = []   # (label, raw JSON value)
@@ -89,9 +95,10 @@ for n, ((label, exam), name) in enumerate(zip(parsed, names)):
     aio.status(f"Compiling {name}.pdf with '{template}' ({n + 1}/{len(parsed)})")
     aio.progress(100 * n / max(len(parsed), 1))
     try:
-        dest = build_pdf(exam, template, uploads, name, aio.OUT, exe, keep_tex)
-        aio.log(f"{label} -> {dest.name} ({aio.human(dest.stat().st_size)})")
-        built += 1
+        for dest in build_pdf(exam, template, uploads, name, aio.OUT, exe, keep_tex,
+                              answer_key, key_output, key_title):
+            aio.log(f"{label} -> {dest.name} ({aio.human(dest.stat().st_size)})")
+            built += 1
     except BuildError as e:
         aio.log(f"{label}: {e}")
         errors.append(f"{label}: {e}")

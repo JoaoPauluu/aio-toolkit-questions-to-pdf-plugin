@@ -4,7 +4,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[margin=2.5cm]{geometry}
-\usepackage{amsmath,amssymb,graphicx,enumitem,fancyhdr,array}
+\usepackage{amsmath,amssymb,graphicx,enumitem,fancyhdr,array,needspace}
 
 \pagestyle{fancy}\fancyhf{}
 \lhead{<<title>>}\rhead{<<student_name>>}\cfoot{\thepage}
@@ -35,6 +35,18 @@
    \begin{center}\renewcommand{\arraystretch}{1.25}\begin{tabular}{|*{#1}{>{\centering\arraybackslash}p{\dimexpr(\linewidth-\arrayrulewidth)/#1-2\tabcolsep-\arrayrulewidth\relax}|}}\examhline}
   {\end{tabular}\ifx\examtablecaption\empty\else\par \small\examtablecaption\fi\end{center}\par\medskip}
 % ------------------------------------------------------------------------
+
+% ---- Sections and answer key (optional, see docs/TEMPLATES.md) ---------
+\newcommand{\examsection}[2]{%
+  \par\needspace{9\baselineskip}\bigskip\hrule\vspace{0.5em}%
+  {\centering\large\scshape #1\par}\vspace{0.4em}\hrule
+  \if\relax\detokenize{#2}\relax\else\par\smallskip{\itshape #2}\par\fi\medskip}
+\newcommand{\examkeytitle}[1]{%
+  \begin{center}{\Large\bfseries #1}\\[0.3em]{\small\textbf{Student:} <<student_name>>}\end{center}\medskip}
+\newcommand{\examcorrect}[1]{\textbf{Correct alternative:}\ \fbox{\textbf{#1}}\par}
+\newcommand{\examanswer}[1]{\textbf{Answer:} #1\par}
+\newcommand{\examexplanation}[1]{\par\smallskip{\small\textit{Solution:} #1}\par}
+\newcommand{\examnoanswer}{\textit{(no answer given)}\par}
 
 \begin{document}
 \begin{center}{\Large\bfseries <<title>>}\end{center}

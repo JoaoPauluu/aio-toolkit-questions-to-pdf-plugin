@@ -34,6 +34,16 @@
   {\end{tabular}\ifx\examtablecaption\empty\else\par \footnotesize\examtablecaption\fi\end{center}\par\medskip}
 % ------------------------------------------------------------------------
 
+% ---- Sections and answer key (optional, see docs/TEMPLATES.md) ---------
+\newcommand{\examsection}[2]{%
+  \par\medskip{\bfseries\MakeUppercase{#1}}\par\vspace{1pt}\hrule\vspace{3pt}%
+  \if\relax\detokenize{#2}\relax\else{\small #2}\par\fi}
+\newcommand{\examkeytitle}[1]{\par{\large\bfseries #1}\par\vspace{2pt}\hrule\medskip}
+\newcommand{\examcorrect}[1]{\textbf{#1}\par}
+\newcommand{\examanswer}[1]{#1\par}
+\newcommand{\examexplanation}[1]{{\small\itshape #1}\par}
+\newcommand{\examnoanswer}{---\par}
+
 \begin{document}
 {\large\bfseries <<title>>}\hfill <<student_name>>, <<date>>
 \hrule\medskip

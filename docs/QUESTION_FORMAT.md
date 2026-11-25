@@ -13,6 +13,39 @@ so its exam JSON files work here unchanged.
 | `items[]` | question | Flat sub-items a), b), c)...: `{statement_tex, points?, images?}`. A plain string is accepted. |
 | `images[]` | question, item | `{key, file, width?, caption?, alt_text?}`. `"fig.png"` is accepted as shorthand (key = `fig`). |
 | `points` | question, item | Optional. Printed with `\exampoints`. |
+| `answer_tex` | question, item | Optional. Shown only in the answer key. |
+| `explanation_tex` | question, item | Optional. Shown only in the answer key with explanations (`answer_key: full`). |
+
+## Exam and sections
+
+The exam has `student_name`, `title` and `date` (plain text) and **either** `questions` **or** `sections`:
+
+```json
+{
+  "student_name": "Carla Mendes",
+  "title": "Revisão",
+  "sections": [
+    { "title": "Parte A - Frações", "intro_tex": "Simplifique as respostas.", "questions": [ ... ] },
+    { "title": "Parte B - Funções", "questions": [ ... ] }
+  ]
+}
+```
+
+- `title` is plain text (escaped). `intro_tex` is an optional LaTeX fragment printed under the heading.
+- Questions are numbered **continuously** across sections (Parte B starts where Parte A stopped).
+- Without `sections` the exam renders exactly as before.
+
+## Answer key (gabarito)
+
+Request one with the plugin's `answer_key` input (`answers` or `full`). It is built from the JSON:
+
+- the correct alternative(s): every alternative with `"is_correct": true`;
+- `answer_tex` of the question and of each item;
+- `explanation_tex` too, when `answer_key` is `full`.
+
+A question or item with none of these is printed as "(no answer)" (wording set by the template). The key keeps the
+sections and the numbering of the exam. It can follow the exam in the same PDF (`key_output: append`) or be a
+separate `<name>_answer_key.pdf` (`key_output: separate`). See `examples/exam_sections.json`.
 
 
 ## Writing fragments

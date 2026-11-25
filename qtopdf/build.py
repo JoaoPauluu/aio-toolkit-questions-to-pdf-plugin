@@ -9,7 +9,7 @@ from datetime import date
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from .render import RenderError, escape_plain, referenced_images, render_body
+from .render import RenderError, escape_plain, referenced_images, render_body, render_key_body
 
 if TYPE_CHECKING:
     from .schema import Exam
@@ -80,12 +80,12 @@ def _locate(source: str, log: str) -> str:
     return f"\n(near question {marker} of the exam)" if m and marker else ""
 
 
-def render_source(exam: Exam, template: str, aliases: dict[str, str]) -> str:
+KEY_MODES = ("none", "answers", "full")
+KEY_OUTPUTS = ("append", "separate")
+
+
+def render_source(exam: Exam, template: str, body: str) -> str:
     tex = load_template(template)
-    try:
-        body = render_body(exam, aliases)
-    except RenderError as e:
-        raise BuildError(str(e)) from e
     values = {
         "student_name": escape_plain(exam.student_name),
         "title": escape_plain(exam.title),
@@ -95,22 +95,8 @@ def render_source(exam: Exam, template: str, aliases: dict[str, str]) -> str:
     return re.sub(r"<<(\w+)>>", lambda m: values[m[1]], tex)
 
 
-def build_pdf(exam: Exam, template: str, uploads: dict[str, bytes], out_name: str, out_dir: Path,
-              tectonic: str | Path, keep_tex: bool = False) -> Path:
-    """uploads maps each Image.file to its bytes. Writes <out_dir>/<out_name>.pdf (and .tex with keep_tex)."""
-    needed = referenced_images(exam)
-    if missing := sorted(needed - uploads.keys()):
-        raise BuildError("Image(s) referenced in the JSON but not available: " + ", ".join(missing))
-    if bad := sorted(n for n in needed if Path(n).suffix.lower() not in IMAGE_TYPES):
-        raise BuildError(f"Unsupported image type: {', '.join(bad)} (use png, jpg or pdf).")
-
-    # Names may contain spaces/underscores that break LaTeX: use safe aliases.
-    aliases = {n: f"img{i}{Path(n).suffix.lower()}" for i, n in enumerate(sorted(needed), 1)}
-    source = render_source(exam, template, aliases)
-    out_dir.mkdir(parents=True, exist_ok=True)
-    if keep_tex:
-        (out_dir / f"{out_name}.tex").write_text(source, encoding="utf-8")
-
+def _compile(source: str, aliases: dict[str, str], uploads: dict[str, bytes], dest: Path,
+             tectonic: str | Path) -> Path:
     with tempfile.TemporaryDirectory() as tmp_dir:
         tmp = Path(tmp_dir)
         (tmp / "main.tex").write_text(source, encoding="utf-8")
@@ -130,6 +116,44 @@ def build_pdf(exam: Exam, template: str, uploads: dict[str, bytes], out_name: st
             errs = re.findall(r"^!.*(?:\n.*){0,2}", log, re.M)[:3]
             detail = "\n".join(errs) or "\n".join((proc.stderr or proc.stdout).strip().splitlines()[-8:])
             raise BuildError("LaTeX error:\n" + detail + _locate(source, log))
-        dest = out_dir / f"{out_name}.pdf"
         dest.write_bytes(pdf.read_bytes())
     return dest
+
+
+def build_pdf(exam: Exam, template: str, uploads: dict[str, bytes], out_name: str, out_dir: Path,
+              tectonic: str | Path, keep_tex: bool = False, answer_key: str = "none",
+              key_output: str = "append", key_title: str = "Gabarito") -> list[Path]:
+    """uploads maps each Image.file to its bytes. Writes <out_name>.pdf, plus <out_name>_answer_key.pdf when
+    answer_key is "answers"/"full" and key_output is "separate" (with "append" the key follows the exam).
+    Returns the PDFs written."""
+    if answer_key not in KEY_MODES:
+        raise BuildError(f"answer_key must be one of {', '.join(KEY_MODES)}")
+    if key_output not in KEY_OUTPUTS:
+        raise BuildError(f"key_output must be one of {', '.join(KEY_OUTPUTS)}")
+    needed = referenced_images(exam)
+    if missing := sorted(needed - uploads.keys()):
+        raise BuildError("Image(s) referenced in the JSON but not available: " + ", ".join(missing))
+    if bad := sorted(n for n in needed if Path(n).suffix.lower() not in IMAGE_TYPES):
+        raise BuildError(f"Unsupported image type: {', '.join(bad)} (use png, jpg or pdf).")
+
+    # Names may contain spaces/underscores that break LaTeX: use safe aliases.
+    aliases = {n: f"img{i}{Path(n).suffix.lower()}" for i, n in enumerate(sorted(needed), 1)}
+    try:
+        bodies = {out_name: render_body(exam, aliases)}
+        if answer_key != "none":
+            key = render_key_body(exam, aliases, answer_key == "full", key_title.strip() or "Gabarito")
+            if key_output == "append":
+                bodies[out_name] += "\n\n\\clearpage\n" + key
+            else:
+                bodies[f"{out_name}_answer_key"] = key
+    except RenderError as e:
+        raise BuildError(str(e)) from e
+
+    out_dir.mkdir(parents=True, exist_ok=True)
+    written = []
+    for name, body in bodies.items():
+        source = render_source(exam, template, body)
+        if keep_tex:
+            (out_dir / f"{name}.tex").write_text(source, encoding="utf-8")
+        written.append(_compile(source, aliases, uploads, out_dir / f"{name}.pdf", tectonic))
+    return written

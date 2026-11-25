@@ -3,7 +3,7 @@ name: Assignment PDF Maker
 category: Documents
 icon: "📝"
 description: Turn exam/assignment JSON (+ images) into a PDF through LaTeX templates.
-version: 1.0.0
+version: 1.1.0
 author: JoaoPauluu
 homepage: https://github.com/JoaoPauluu/aio-toolkit-questions-to-pdf-plugin
 license: MIT
@@ -42,6 +42,28 @@ inputs:
     label: Output name
     default: exam
     help: With several exams, each PDF is named <output>_<student>.pdf.
+  - name: answer_key
+    type: select
+    label: Answer key (gabarito)
+    default: none
+    options:
+      - {value: none, label: None}
+      - {value: answers, label: Answers}
+      - {value: full, label: Answers + explanations}
+    help: Built from the JSON - correct alternatives (is_correct), answer_tex and explanation_tex.
+  - name: key_output
+    type: select
+    label: Answer key output
+    default: append
+    options:
+      - {value: append, label: After the exam (same PDF)}
+      - {value: separate, label: Separate PDF (<name>_answer_key.pdf)}
+    show_if: {answer_key: [answers, full]}
+  - name: key_title
+    type: text
+    label: Answer key title
+    default: Gabarito
+    show_if: {answer_key: [answers, full]}
   - name: keep_tex
     type: checkbox
     label: Also return the generated .tex

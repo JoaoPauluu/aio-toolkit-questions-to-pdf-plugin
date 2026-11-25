@@ -35,6 +35,11 @@ curl -H 'Content-Type: application/json' \
      -d "{\"template\": \"classic\", \"exam\": $(cat examples/exam_with_image.json),
           \"images\": {\"graph.png\": \"$(base64 -w0 examples/graph.png)\"}}" \
      'http://aio-toolkit:8080/api/plugins/assignment-pdf/run?wait=5m&output=file' -o exam.pdf
+
+# Sections + answer key as a separate PDF (two PDFs -> a zip)
+curl -F files=@examples/exam_sections.json -F files=@examples/graph.png -F template=blue_continuous \
+     -F answer_key=full -F key_output=separate \
+     'http://aio-toolkit:8080/api/plugins/assignment-pdf/run?wait=5m&output=file' -o exam.zip
 ```
 
 | Input | Type | Meaning |
@@ -44,6 +49,9 @@ curl -H 'Content-Type: application/json' \
 | `images` | JSON | `{"graph.png": "<base64 or data: URL>"}` |
 | `template` | select | `classic` (default), `compact`, `blue_continuous`, `blue_page_break` |
 | `output_name` | text | base name of the PDF(s), default `exam` |
+| `answer_key` | select | `none` (default), `answers`, `full` (answers + explanations) |
+| `key_output` | select | `append` (default: the key follows the exam in the same PDF) or `separate` (`<name>_answer_key.pdf`) |
+| `key_title` | text | heading of the answer key, default `Gabarito` |
 | `keep_tex` | checkbox | also return the generated `.tex` |
 
 From another plugin: `aio.call("assignment-pdf", {"exam": {...}, "images": {...}})` or
@@ -65,7 +73,9 @@ From another plugin: `aio.call("assignment-pdf", {"exam": {...}, "images": {...}
 }
 ```
 
-Text fields ending in `_tex` are LaTeX fragments. The full guide is in [docs/QUESTION_FORMAT.md](docs/QUESTION_FORMAT.md).
+Questions can also be grouped in titled `sections` (numbering continues across them), and questions/items
+can carry `answer_tex` / `explanation_tex` for the answer key (gabarito), which also marks the alternatives with
+`"is_correct": true`. Text fields ending in `_tex` are LaTeX fragments. The full guide is in [docs/QUESTION_FORMAT.md](docs/QUESTION_FORMAT.md).
 
 ## Templates
 

@@ -31,6 +31,8 @@ class Item(BaseModel):
     statement_tex: TexStr
     points: float | None = None
     images: list[Image] = []
+    answer_tex: TexStr | None = None          # answer key only
+    explanation_tex: TexStr | None = None     # answer key with solutions only
 
     _images = field_validator("images", mode="before")(lambda cls, v: _image_shorthand(v))
 
@@ -46,6 +48,8 @@ class Question(BaseModel):
     alternatives: list[Alternative] = Field([], max_length=26)
     items: list[Item] = Field([], max_length=26)
     images: list[Image] = []
+    answer_tex: TexStr | None = None          # answer key only
+    explanation_tex: TexStr | None = None     # answer key with solutions only
 
     _images = field_validator("images", mode="before")(lambda cls, v: _image_shorthand(v))
 
@@ -61,11 +65,28 @@ class Question(BaseModel):
         return self
 
 
+class Section(BaseModel):
+    """A titled group of questions. Numbering continues across sections."""
+    title: str = Field(max_length=200)                      # plain text (escaped)
+    intro_tex: TexStr = ""
+    questions: list[Question] = Field(min_length=1)
+
+
 class Exam(BaseModel):
     student_name: str
     title: str = ""
     date: str = ""                                          # defaults to today
-    questions: list[Question] = Field(min_length=1)
+    questions: list[Question] = []                          # either questions...
+    sections: list[Section] = []                            # ...or sections, not both
+
+    @model_validator(mode="after")
+    def _questions_or_sections(self):
+        if bool(self.questions) == bool(self.sections):
+            raise ValueError("Give either 'questions' or 'sections' (with at least one question), not both.")
+        return self
+
+    def all_questions(self) -> list[Question]:
+        return self.questions or [q for s in self.sections for q in s.questions]
 
 
 def _image_shorthand(v):

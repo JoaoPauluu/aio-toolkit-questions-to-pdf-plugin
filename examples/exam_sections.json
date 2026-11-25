@@ -1,0 +1,79 @@
+{
+  "student_name": "Carla Mendes",
+  "title": "Revisão - Frações e Funções",
+  "date": "25/11/2026",
+  "sections": [
+    {
+      "title": "Parte A - Frações",
+      "intro_tex": "Simplifique as respostas sempre que possível.",
+      "questions": [
+        {
+          "statement_tex": "Quanto é \\(\\dfrac{1}{2} + \\dfrac{1}{3}\\)?",
+          "points": 1,
+          "alternatives": [
+            "\\(\\dfrac{2}{5}\\)",
+            {
+              "content_tex": "\\(\\dfrac{5}{6}\\)",
+              "is_correct": true
+            },
+            "\\(\\dfrac{1}{6}\\)",
+            "\\(1\\)"
+          ],
+          "explanation_tex": "Com denominador comum 6: \\(\\dfrac{3}{6} + \\dfrac{2}{6} = \\dfrac{5}{6}\\)."
+        },
+        {
+          "statement_tex": "Calcule:",
+          "points": 2,
+          "items": [
+            {
+              "statement_tex": "\\(\\dfrac{3}{4} \\cdot \\dfrac{2}{9}\\)",
+              "answer_tex": "\\(\\dfrac{1}{6}\\)",
+              "explanation_tex": "\\(\\dfrac{3 \\cdot 2}{4 \\cdot 9} = \\dfrac{6}{36} = \\dfrac{1}{6}\\)."
+            },
+            {
+              "statement_tex": "\\(\\dfrac{5}{8} \\div \\dfrac{5}{2}\\)",
+              "answer_tex": "\\(\\dfrac{1}{4}\\)"
+            }
+          ]
+        },
+        {
+          "statement_tex": "Explique por que \\(\\dfrac{2}{4}\\) e \\(\\dfrac{1}{2}\\) representam a mesma quantidade.",
+          "points": 1
+        }
+      ]
+    },
+    {
+      "title": "Parte B - Funções",
+      "questions": [
+        {
+          "statement_tex": "Observe o gráfico de \\(f\\) abaixo.\n\n{{image:graph}}\n\nQuantas raízes reais \\(f\\) possui?",
+          "points": 2,
+          "alternatives": [
+            "Nenhuma",
+            "Uma",
+            {
+              "content_tex": "Duas",
+              "is_correct": true
+            },
+            "Três"
+          ],
+          "images": [
+            {
+              "key": "graph",
+              "file": "graph.png",
+              "width": 0.45,
+              "caption": "Gráfico de \\(f(x)=x^2-1\\)"
+            }
+          ],
+          "explanation_tex": "A parábola corta o eixo \\(x\\) em \\(x=-1\\) e \\(x=1\\)."
+        },
+        {
+          "statement_tex": "Para \\(f(x)=x^2-1\\), resolva \\(f(x)=8\\).",
+          "points": 2,
+          "answer_tex": "\\(x=3\\) ou \\(x=-3\\)",
+          "explanation_tex": "\\(x^2-1=8 \\Rightarrow x^2=9 \\Rightarrow x=\\pm 3\\)."
+        }
+      ]
+    }
+  ]
+}
